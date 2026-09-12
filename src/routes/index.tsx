@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { Boxes, GraduationCap, Radio, Users } from "lucide-react";
+
 import { useEffect, useState, type FormEvent } from "react";
 import { Brand } from "@/components/brand";
 import { Button } from "@/components/ui/button";
@@ -61,6 +61,5 @@ function Home() {
         </form>
         <p className="mt-6 text-center text-sm text-muted-foreground">{mode === "login" ? "¿Aún no tienes cuenta?" : "¿Ya eres parte?"} <button type="button" onClick={()=>setMode(mode === "login" ? "signup" : "login")} className="font-bold text-accent hover:underline">{mode === "login" ? "Regístrate" : "Inicia sesión"}</button></p>
       </section>
-    </div>
   </main>;
 }
