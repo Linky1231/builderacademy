@@ -96,6 +96,7 @@ export type Database = {
       }
       messages: {
         Row: {
+          attachment_mime_type: string | null
           attachment_name: string | null
           attachment_path: string | null
           author_id: string
@@ -105,6 +106,7 @@ export type Database = {
           id: string
         }
         Insert: {
+          attachment_mime_type?: string | null
           attachment_name?: string | null
           attachment_path?: string | null
           author_id: string
@@ -114,6 +116,7 @@ export type Database = {
           id?: string
         }
         Update: {
+          attachment_mime_type?: string | null
           attachment_name?: string | null
           attachment_path?: string | null
           author_id?: string
