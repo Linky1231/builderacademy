@@ -47,20 +47,10 @@ function Home() {
     if (!result.redirected) await navigate({ to: "/dashboard" });
   }
 
-  return <main className="relative min-h-screen overflow-hidden">
-    <div className="mx-auto grid min-h-screen max-w-7xl items-center gap-12 px-5 py-10 lg:grid-cols-[1.15fr_.85fr] lg:px-8">
-      <section className="max-w-2xl py-8">
-        <Brand className="mb-16" />
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-4 py-2 text-xs font-bold text-accent"><span className="h-2 w-2 rounded-full bg-emerald-400" /> CREA. PUBLICA. CRECE.</div>
-        <h1 className="max-w-2xl text-5xl font-extrabold leading-[1.05] text-card-foreground sm:text-7xl">Construye mundos.<br/><span className="text-accent">Conviértete en creador.</span></h1>
-        <p className="mt-6 max-w-xl text-lg leading-8 text-muted-foreground">Domina Builda con clases prácticas, sesiones en vivo y una comunidad que convierte ideas en experiencias jugables.</p>
-        <div className="mt-10 grid max-w-xl grid-cols-3 gap-3">
-          {[{icon:GraduationCap,n:"Rutas",t:"guiadas"},{icon:Radio,n:"Clases",t:"en vivo"},{icon:Users,n:"Comunidad",t:"activa"}].map(({icon:Icon,n,t}) => <div key={n} className="rounded-2xl border border-border bg-card/70 p-4"><Icon className="mb-3 text-accent"/><strong className="block text-card-foreground">{n}</strong><span className="text-xs text-muted-foreground">{t}</span></div>)}
-        </div>
-      </section>
-
-      <section className="academy-panel relative rounded-[24px] border border-border bg-card/95 p-6 sm:p-8">
-        <div className="mb-7 flex items-center gap-3"><div className="ice-glow flex h-12 w-12 items-center justify-center rounded-2xl bg-secondary"><Boxes className="text-accent"/></div><div><h2 className="text-2xl font-extrabold text-card-foreground">{mode === "login" ? "Continúa creando" : "Empieza tu camino"}</h2><p className="text-sm text-muted-foreground">Tu próxima gran idea comienza aquí.</p></div></div>
+  return <main className="relative grid min-h-screen place-items-center overflow-hidden px-5 py-10">
+      <section className="academy-panel relative w-full max-w-md rounded-[24px] border border-border bg-card/95 p-6 sm:p-8">
+        <Brand className="mb-8 justify-center" />
+        <div className="mb-7 text-center"><h2 className="text-2xl font-extrabold text-card-foreground">{mode === "login" ? "Continúa creando" : "Empieza tu camino"}</h2><p className="text-sm text-muted-foreground">Tu próxima gran idea comienza aquí.</p></div>
         <Button onClick={google} disabled={busy} variant="outline" className="h-12 w-full border-primary text-accent hover:bg-secondary hover:text-card-foreground"><span className="text-lg font-bold">G</span> Continuar con Google</Button>
         <div className="my-6 flex items-center gap-3 text-xs text-muted-foreground"><span className="h-px flex-1 bg-border"/>O CON CORREO<span className="h-px flex-1 bg-border"/></div>
         <form onSubmit={submit} className="space-y-4">
