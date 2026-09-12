@@ -1,4 +1,4 @@
-import logo from "@/assets/builder-academy-logo.jpeg.asset.json";
+import logo from "@/assets/builder-logo.png.asset.json";
 import { cn } from "@/lib/utils";
 
 export function Brand({ compact = false, className }: { compact?: boolean; className?: string }) {
