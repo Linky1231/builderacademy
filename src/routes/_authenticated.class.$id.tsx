@@ -31,13 +31,14 @@ function MentionPicker({posts}:{posts:ForumPost[]}){
   const value=controller.textInput.value;
   const match=/(?:^|\s)@([^\n@]{0,40})$/.exec(value);
   if(!match) return null;
-  const query=match[1].toLowerCase();
+  const term=match[1]??"";
+  const query=term.toLowerCase();
   const results=posts.filter(post=>post.title.toLowerCase().includes(query)).slice(0,5);
   return <div className="w-full overflow-hidden rounded-lg border border-border bg-popover">
     <p className="px-3 py-2 text-xs font-bold text-muted-foreground">Mencionar una publicación del foro</p>
     {results.length===0?<p className="px-3 pb-3 text-xs text-muted-foreground">No hay publicaciones que coincidan.</p>:results.map(post=>
       <button key={post.id} type="button" className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm hover:bg-secondary/60" onClick={()=>{
-        const start=value.length-match[1].length-1;
+        const start=value.length-term.length-1;
         controller.textInput.setInput(`${value.slice(0,start)}@[${post.title}](${post.id}) `);
       }}><AtSign className="h-4 w-4 shrink-0 text-accent"/><span className="truncate">{post.title}</span></button>)}
   </div>;

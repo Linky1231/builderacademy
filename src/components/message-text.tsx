@@ -8,7 +8,7 @@ export function MessageText({ content }: { content: string }) {
   let last = 0;
   for (const match of content.matchAll(MENTION)) {
     if (match.index! > last) nodes.push(content.slice(last, match.index));
-    nodes.push({ title: match[1], id: match[2] });
+    nodes.push({ title: match[1] ?? "", id: match[2] ?? "" });
     last = match.index! + match[0].length;
   }
   if (last < content.length) nodes.push(content.slice(last));
