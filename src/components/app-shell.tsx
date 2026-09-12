@@ -17,7 +17,8 @@ export function AppShell({ children, isAdmin = false, fullScreen = false }: { ch
     <header className="sticky top-0 z-40 shrink-0 border-b border-border bg-background/85 backdrop-blur-xl"><div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6">
       <Link to="/dashboard" aria-label="Ir al panel"><Brand /></Link>
       <nav className="flex items-center gap-1">
-        <Button asChild variant="ghost" className="hidden sm:inline-flex"><Link to="/dashboard"><LayoutDashboard />Clases</Link></Button>
+        <Button asChild variant="ghost"><Link to="/dashboard"><LayoutDashboard /><span className="hidden sm:inline">Clases</span></Link></Button>
+        <Button asChild variant="ghost"><Link to="/forum"><MessagesSquare /><span className="hidden sm:inline">Foro</span></Link></Button>
         {isAdmin && <Button asChild variant="ghost"><Link to="/admin"><Shield /><span className="hidden sm:inline">Administración</span></Link></Button>}
         <Button asChild variant="ghost"><Link to="/onboarding"><UserRound /><span className="hidden sm:inline">Perfil</span></Link></Button>
         <Button variant="ghost" size="icon" onClick={signOut} aria-label="Cerrar sesión" title="Cerrar sesión"><LogOut /></Button>
