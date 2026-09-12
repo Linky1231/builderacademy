@@ -94,6 +94,71 @@ export type Database = {
         }
         Relationships: []
       }
+      forum_attachments: {
+        Row: {
+          created_at: string
+          created_by: string
+          file_path: string
+          id: string
+          mime_type: string
+          post_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          file_path: string
+          id?: string
+          mime_type: string
+          post_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          file_path?: string
+          id?: string
+          mime_type?: string
+          post_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "forum_attachments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "forum_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      forum_posts: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string
+          id: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string
+          id?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string
+          id?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       messages: {
         Row: {
           attachment_mime_type: string | null
