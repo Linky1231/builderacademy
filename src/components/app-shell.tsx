@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, LogOut, Shield, UserRound } from "lucide-react";
+import { LayoutDashboard, LogOut, MessagesSquare, Shield, UserRound } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
