@@ -14,3 +14,4 @@
 - [x] Añadir el apartado Reto en administración y publicarlo en el chat al iniciar o reanudar la sesión.
 - [x] Añadir Trust Points con historial de cambios y gestión de sanciones y baneos.
 - [x] Aplicar un sistema global de animaciones fluidas y accesibles a toda la interfaz.
+- [x] Mostrar Trust Points e historial personal de cambios en la edición del perfil.
