@@ -212,6 +212,7 @@ export type Database = {
           builda_id: string
           created_at: string
           id: string
+          trust_points: number
           updated_at: string
           username: string
         }
@@ -220,6 +221,7 @@ export type Database = {
           builda_id: string
           created_at?: string
           id: string
+          trust_points?: number
           updated_at?: string
           username: string
         }
@@ -228,8 +230,39 @@ export type Database = {
           builda_id?: string
           created_at?: string
           id?: string
+          trust_points?: number
           updated_at?: string
           username?: string
+        }
+        Relationships: []
+      }
+      trust_events: {
+        Row: {
+          balance_after: number
+          created_at: string
+          created_by: string
+          delta: number
+          id: string
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          balance_after: number
+          created_at?: string
+          created_by: string
+          delta: number
+          id?: string
+          reason: string
+          user_id: string
+        }
+        Update: {
+          balance_after?: number
+          created_at?: string
+          created_by?: string
+          delta?: number
+          id?: string
+          reason?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -254,6 +287,42 @@ export type Database = {
         }
         Relationships: []
       }
+      user_sanctions: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string
+          expires_at: string | null
+          id: string
+          reason: string
+          type: Database["public"]["Enums"]["sanction_type"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by: string
+          expires_at?: string | null
+          id?: string
+          reason: string
+          type?: Database["public"]["Enums"]["sanction_type"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string
+          expires_at?: string | null
+          id?: string
+          reason?: string
+          type?: Database["public"]["Enums"]["sanction_type"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -266,10 +335,12 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_restricted: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "student"
       class_status: "live" | "available" | "closed"
+      sanction_type: "warning" | "suspension" | "ban"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -399,6 +470,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "student"],
       class_status: ["live", "available", "closed"],
+      sanction_type: ["warning", "suspension", "ban"],
     },
   },
 } as const
