@@ -42,10 +42,9 @@ function FilePreview({ file }: { file: PostFile }) {
 }
 
 function Forum() {
-  const { user } = Route.useRouteContext();
+  const { user, isAdmin } = Route.useRouteContext();
   const [posts, setPosts] = useState<Post[]>([]);
   const [files, setFiles] = useState<PostFile[]>([]);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
@@ -55,12 +54,10 @@ function Forum() {
   const [uploads, setUploads] = useState<File[]>([]);
 
   async function load() {
-    const [roles, postResult, fileResult] = await Promise.all([
-      supabase.from("user_roles").select("role").eq("user_id", user.id),
+    const [postResult, fileResult] = await Promise.all([
       supabase.from("forum_posts").select("*").order("created_at", { ascending: false }),
       supabase.from("forum_attachments").select("*").order("created_at"),
     ]);
-    setIsAdmin(roles.data?.some((entry) => entry.role === "admin") ?? false);
     setPosts(postResult.data ?? []);
     setFiles(fileResult.data ?? []);
     setLoading(false);

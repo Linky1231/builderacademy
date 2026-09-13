@@ -25,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const empty = { title: "", description: "", category: "Fundamentos", status: "available" as AcademyClass["status"], scheduled_at: "", duration_minutes: 60, cover_key: "default" };
 
 function Admin() {
-  const { user } = Route.useRouteContext();
+  const { user, isAdmin } = Route.useRouteContext();
   const navigate = useNavigate();
   const [classes, setClasses] = useState<AcademyClass[]>([]);
   const [students, setStudents] = useState<Profile[]>([]);
@@ -41,20 +41,19 @@ function Admin() {
   const [resourceFile, setResourceFile] = useState<File | null>(null);
 
   async function load() {
-    const [role, classResult, profileResult, resourceResult] = await Promise.all([
-      supabase.from("user_roles").select("role").eq("user_id", user.id),
+    if (!isAdmin) { void navigate({ to: "/dashboard" }); return; }
+    const [classResult, profileResult, resourceResult] = await Promise.all([
       supabase.from("classes").select("*").order("created_at", { ascending: false }),
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
       supabase.from("class_resources").select("*").order("created_at", { ascending: false }),
     ]);
-    if (!role.data?.some((entry) => entry.role === "admin")) { void navigate({ to: "/dashboard" }); return; }
     setClasses(classResult.data ?? []);
     setStudents(profileResult.data ?? []);
     setResources(resourceResult.data ?? []);
     setResourceClass((current) => current || classResult.data?.[0]?.id || "");
   }
 
-  useEffect(() => { void load(); }, []);
+  useEffect(() => { void load(); }, [isAdmin]);
 
   const visibleClasses = useMemo(() => classes.filter((item) => {
     const matchesStatus = filter === "all" || item.status === filter;
