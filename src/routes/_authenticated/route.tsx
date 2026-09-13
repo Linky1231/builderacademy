@@ -6,7 +6,14 @@ export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/" });
-    return { user: data.user };
+    const { data: roles } = await supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", data.user.id);
+    return {
+      user: data.user,
+      isAdmin: roles?.some((entry) => entry.role === "admin") ?? false,
+    };
   },
   component: () => <Outlet />,
 });
