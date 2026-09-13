@@ -14,7 +14,7 @@ export function AppShell({ children, isAdmin = false, fullScreen = false }: { ch
     await queryClient.cancelQueries(); queryClient.clear(); await supabase.auth.signOut(); await navigate({ to: "/", replace: true });
   }
   return <div className={cn("min-h-screen", fullScreen && "flex h-dvh flex-col overflow-hidden")}>
-    <header className="sticky top-0 z-40 shrink-0 border-b border-border bg-background/85 backdrop-blur-xl"><div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6">
+    <header className={cn("sticky top-0 z-40 shrink-0 border-b border-border bg-background/85 backdrop-blur-xl", fullScreen && "hidden sm:block")}><div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6">
       <Link to="/dashboard" aria-label="Ir al panel"><Brand /></Link>
       <nav className="flex items-center gap-1">
         <Button asChild variant="ghost"><Link to="/dashboard" activeProps={{ className: "bg-accent text-accent-foreground" }}><LayoutDashboard /><span className="hidden sm:inline">Clases</span></Link></Button>
