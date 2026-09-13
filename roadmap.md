@@ -6,3 +6,6 @@
 - [x] Habilitar adjuntos de cualquier extensión con vistas previas seguras.
 - [x] Completar almacenamiento, permisos y limpieza de archivos.
 - [ ] Validar flujos de administrador, estudiante, móvil y escritorio.
+
+- [ ] Corregir definitivamente la eliminación de publicaciones y mensajes, con persistencia, carga y errores.
+- [ ] Modernizar la interfaz completa con navegación activa y microinteracciones ligeras.
