@@ -24,6 +24,6 @@ export function AppShell({ children, isAdmin = false, fullScreen = false }: { ch
         <Button variant="ghost" size="icon" onClick={signOut} aria-label="Cerrar sesión" title="Cerrar sesión"><LogOut /></Button>
       </nav>
     </div></header>
-    <main className={cn("w-full", fullScreen ? "min-h-0 flex-1 overflow-hidden" : "mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12")}>{children}</main>
+    <main className={cn("motion-page w-full", fullScreen ? "min-h-0 flex-1 overflow-hidden" : "mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12")}>{children}</main>
   </div>;
 }
