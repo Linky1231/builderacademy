@@ -93,11 +93,19 @@ function Forum() {
   }
 
   async function removePost(post: Post) {
-    const result = await supabase.from("forum_posts").delete().eq("id", post.id);
-    if (result.error) { setNotice(result.error.message); return; }
+    setNotice("");
+    const postFiles = files.filter((entry) => entry.post_id === post.id);
+    const result = await supabase.from("forum_posts").delete().eq("id", post.id).select("id").maybeSingle();
+    if (result.error) throw new Error(`No se pudo eliminar la publicación: ${result.error.message}`);
+    if (!result.data) throw new Error("La publicación no se eliminó. Comprueba tus permisos e inténtalo de nuevo.");
+    if (postFiles.length) {
+      const storageResult = await supabase.storage.from("forum-media").remove(postFiles.map((entry) => entry.file_path));
+      if (storageResult.error) setNotice("Publicación eliminada. Algunos archivos no pudieron limpiarse.");
+    }
     setPosts((current) => current.filter((entry) => entry.id !== post.id));
     setFiles((current) => current.filter((entry) => entry.post_id !== post.id));
-    setNotice("Publicación eliminada.");
+    setNotice((current) => current || "Publicación eliminada.");
+    await load();
   }
 
   return <AppShell isAdmin={isAdmin}>

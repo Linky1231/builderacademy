@@ -7,9 +7,11 @@ export function MessageText({ content }: { content: string }) {
   const nodes: Array<string | { title: string; id: string }> = [];
   let last = 0;
   for (const match of content.matchAll(MENTION)) {
-    if (match.index! > last) nodes.push(content.slice(last, match.index));
+    const matchIndex = match.index;
+    if (matchIndex === undefined) continue;
+    if (matchIndex > last) nodes.push(content.slice(last, matchIndex));
     nodes.push({ title: match[1] ?? "", id: match[2] ?? "" });
-    last = match.index! + match[0].length;
+    last = matchIndex + match[0].length;
   }
   if (last < content.length) nodes.push(content.slice(last));
 
