@@ -49,6 +49,7 @@ function Admin() {
       supabase.from("class_resources").select("*").order("created_at", { ascending: false }),
     ]);
     setClasses(classResult.data ?? []);
+    setChallenges(Object.fromEntries((classResult.data ?? []).map((entry) => [entry.id, entry.challenge ?? ""])));
     setStudents(profileResult.data ?? []);
     setResources(resourceResult.data ?? []);
     setResourceClass((current) => current || classResult.data?.[0]?.id || "");
@@ -80,8 +81,35 @@ function Admin() {
   async function changeStatus(item: AcademyClass, status: AcademyClass["status"]) {
     const result = await supabase.from("classes").update({ status }).eq("id", item.id);
     if (result.error) { setNotice(result.error.message); return; }
-    setNotice(status === "closed" ? "Sala cerrada para participantes." : status === "live" ? "Sala abierta en vivo." : "Sala disponible.");
+    let challengeNotice = "";
+    const challenge = (challenges[item.id] ?? item.challenge ?? "").trim();
+    if (status !== "closed") {
+      if (!challenge) challengeNotice = " Añade un reto en la pestaña Reto para compartirlo al iniciar.";
+      else {
+        const posted = await supabase.from("messages").insert({ class_id: item.id, author_id: user.id, content: challenge, is_challenge: true });
+        challengeNotice = posted.error ? " El reto no pudo publicarse en el chat." : " El reto se publicó en el chat.";
+      }
+    }
+    setNotice((status === "closed" ? "Sala cerrada para participantes." : status === "live" ? "Sala abierta en vivo." : "Sala disponible.") + challengeNotice);
     await load();
+  }
+
+  async function saveChallenge(item: AcademyClass) {
+    setBusy(true); setNotice("");
+    const result = await supabase.from("classes").update({ challenge: (challenges[item.id] ?? "").trim() }).eq("id", item.id);
+    setBusy(false);
+    if (result.error) { setNotice(result.error.message); return; }
+    setNotice(`Reto guardado para “${item.title}”.`); await load();
+  }
+
+  async function publishChallenge(item: AcademyClass) {
+    const challenge = (challenges[item.id] ?? "").trim();
+    if (!challenge) { setNotice("Escribe la indicación del reto antes de publicarla."); return; }
+    if (item.status === "closed") { setNotice("Reabre la sala para publicar el reto en el chat."); return; }
+    setBusy(true);
+    const posted = await supabase.from("messages").insert({ class_id: item.id, author_id: user.id, content: challenge, is_challenge: true });
+    setBusy(false);
+    setNotice(posted.error ? `No se pudo publicar el reto: ${posted.error.message}` : "Reto publicado en el chat de la clase.");
   }
 
   async function removeClass(item: AcademyClass) {
