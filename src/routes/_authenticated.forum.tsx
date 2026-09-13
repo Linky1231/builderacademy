@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, FileText, Image as ImageIcon, LoaderCircle, MessagesSquare, Plus, Trash2, Upload, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Download, FileText, Image as ImageIcon, LoaderCircle, MessagesSquare, Plus, Search, Trash2, Upload, X } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDelete } from "@/components/confirm-delete";
