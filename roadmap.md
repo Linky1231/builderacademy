@@ -15,3 +15,4 @@
 - [x] Añadir Trust Points con historial de cambios y gestión de sanciones y baneos.
 - [x] Aplicar un sistema global de animaciones fluidas y accesibles a toda la interfaz.
 - [x] Mostrar Trust Points e historial personal de cambios en la edición del perfil.
+- [ ] Corregir identidad de mensajes, chat móvil, fecha administrativa, regreso desde Perfil y logo estático en acceso.
