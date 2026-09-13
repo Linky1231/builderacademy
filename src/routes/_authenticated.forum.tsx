@@ -31,7 +31,7 @@ function FilePreview({ file }: { file: PostFile }) {
   const isImage = file.mime_type.startsWith("image/");
   if (isImage) {
     return <a href={url ?? undefined} target="_blank" rel="noreferrer" className="block overflow-hidden rounded-xl border border-border bg-background/40">
-      {url ? <img src={url} alt={file.title} loading="lazy" className="h-48 w-full object-cover" /> : <div className="grid h-48 place-items-center text-muted-foreground"><LoaderCircle className="animate-spin" /></div>}
+      {url ? <img src={url} alt={file.title} loading="lazy" className="h-auto max-h-[32rem] w-full object-contain" /> : <div className="grid h-48 place-items-center text-muted-foreground"><LoaderCircle className="animate-spin" /></div>}
     </a>;
   }
   return <Button asChild variant="outline" className="h-auto w-full justify-start p-3">
