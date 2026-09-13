@@ -132,15 +132,24 @@ function Forum() {
     await load();
   }
 
+  const filteredPosts = query.trim()
+    ? posts.filter((post) => `${post.title} ${post.description}`.toLowerCase().includes(query.trim().toLowerCase()))
+    : posts;
+
   return <AppShell isAdmin={isAdmin}>
     <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
-      <div>
+      <div className="min-w-0">
         <span className="flex items-center gap-2 text-xs font-bold text-accent"><MessagesSquare className="h-4 w-4" /> FORO</span>
         <h1 className="mt-2 text-3xl font-extrabold text-card-foreground sm:text-4xl">Publicaciones y material</h1>
         <p className="mt-2 text-muted-foreground">Consulta anuncios, imágenes y documentos de la academia. Puedes mencionarlos en cualquier sala escribiendo @.</p>
       </div>
       {isAdmin && <Button onClick={() => setOpen((value) => !value)}>{open ? <X /> : <Plus />}{open ? "Cancelar" : "Nueva publicación"}</Button>}
     </header>
+
+    <div className="relative mb-6">
+      <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+      <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar publicaciones del foro…" className="pl-9" aria-label="Buscar publicaciones" />
+    </div>
 
     {notice && <div className="motion-notice mb-6 flex items-center justify-between rounded-xl border border-border bg-secondary/40 px-4 py-3 text-sm"><span>{notice}</span><Button size="icon-sm" variant="ghost" onClick={() => setNotice("")} aria-label="Cerrar aviso"><X /></Button></div>}
 
