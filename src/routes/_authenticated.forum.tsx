@@ -42,6 +42,29 @@ function FilePreview({ file }: { file: PostFile }) {
   </Button>;
 }
 
+function PostCard({ post, postFiles, isAdmin, onRemove }: { post: Post; postFiles: PostFile[]; isAdmin: boolean; onRemove: (post: Post) => void }) {
+  const [expanded, setExpanded] = useState(false);
+  const images = postFiles.filter((file) => file.mime_type.startsWith("image/"));
+  const documents = postFiles.filter((file) => !file.mime_type.startsWith("image/"));
+  const isLong = post.description.length > 280;
+  const preview = !expanded && isLong ? post.description.slice(0, 280) + "…" : post.description;
+  return <article id={post.id} className="motion-surface scroll-mt-24 rounded-xl border border-border bg-card/85 p-5">
+    <div className="flex items-start justify-between gap-4">
+      <div className="min-w-0">
+        <h2 className="truncate text-xl font-extrabold text-card-foreground">{post.title}</h2>
+        <p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(new Date(post.created_at))}</p>
+      </div>
+      {isAdmin && <ConfirmDelete title="Eliminar publicación" description={`Se eliminará “${post.title}” y todo su material.`} onConfirm={() => onRemove(post)}>
+        <Button size="icon" variant="ghost" aria-label="Eliminar publicación"><Trash2 /></Button>
+      </ConfirmDelete>}
+    </div>
+    <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{preview}</p>
+    {isLong && <Button variant="link" className="mt-1 h-auto p-0 text-accent" onClick={() => setExpanded((v) => !v)}>{expanded ? <><ChevronUp className="h-4 w-4" /> Ver menos</> : <><ChevronDown className="h-4 w-4" /> Ver más</>}</Button>}
+    {images.length > 0 && <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{images.map((file) => <FilePreview key={file.id} file={file} />)}</div>}
+    {documents.length > 0 && <div className="mt-4 grid gap-2 sm:grid-cols-2">{documents.map((file) => <FilePreview key={file.id} file={file} />)}</div>}
+  </article>;
+}
+
 function Forum() {
   const { user, isAdmin } = Route.useRouteContext();
   const cachedForum = readCache<{ posts: Post[]; files: PostFile[] }>("forum");
@@ -54,6 +77,7 @@ function Forum() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [uploads, setUploads] = useState<File[]>([]);
+  const [query, setQuery] = useState("");
 
   async function load() {
     const [postResult, fileResult] = await Promise.all([
