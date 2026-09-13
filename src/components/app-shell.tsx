@@ -7,12 +7,13 @@ import { Brand } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { clearCachedAuthSession } from "@/lib/auth-session";
+import { clearDataCache } from "@/lib/data-cache";
 
 export function AppShell({ children, isAdmin = false, fullScreen = false }: { children: ReactNode; isAdmin?: boolean; fullScreen?: boolean }) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   async function signOut() {
-    await queryClient.cancelQueries(); queryClient.clear(); clearCachedAuthSession(); await supabase.auth.signOut(); await navigate({ to: "/", replace: true });
+    await queryClient.cancelQueries(); queryClient.clear(); clearCachedAuthSession(); clearDataCache(); await supabase.auth.signOut(); await navigate({ to: "/", replace: true });
   }
   return <div className={cn("min-h-screen", fullScreen && "fixed inset-0 flex h-dvh min-h-0 w-full flex-col overflow-hidden overscroll-none")}>
     <header className={cn("sticky top-0 z-40 shrink-0 border-b border-border bg-background/85 backdrop-blur-xl", fullScreen && "hidden sm:block")}><div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-4 sm:px-6">
