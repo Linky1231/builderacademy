@@ -166,25 +166,10 @@ function Forum() {
     </form>}
 
     {loading ? <div className="motion-loading grid min-h-60 place-items-center text-sm text-muted-foreground"><span className="flex items-center gap-2"><LoaderCircle className="animate-spin" />Cargando el foro…</span></div>
-      : posts.length === 0 ? <div className="motion-surface rounded-xl border border-dashed border-border py-16 text-center text-muted-foreground">Todavía no hay publicaciones en el foro.</div>
-      : <div className="motion-stagger space-y-5">{posts.map((post) => {
+      : filteredPosts.length === 0 ? <div className="motion-surface rounded-xl border border-dashed border-border py-16 text-center text-muted-foreground">{posts.length === 0 ? "Todavía no hay publicaciones en el foro." : "Sin resultados para tu búsqueda."}</div>
+      : <div className="motion-stagger space-y-5">{filteredPosts.map((post) => {
         const postFiles = files.filter((file) => file.post_id === post.id);
-        const images = postFiles.filter((file) => file.mime_type.startsWith("image/"));
-        const documents = postFiles.filter((file) => !file.mime_type.startsWith("image/"));
-        return <article key={post.id} id={post.id} className="scroll-mt-24 rounded-xl border border-border bg-card/85 p-5">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <h2 className="text-xl font-extrabold text-card-foreground">{post.title}</h2>
-              <p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(new Date(post.created_at))}</p>
-            </div>
-            {isAdmin && <ConfirmDelete title="Eliminar publicación" description={`Se eliminará “${post.title}” y todo su material.`} onConfirm={() => removePost(post)}>
-              <Button size="icon" variant="ghost" aria-label="Eliminar publicación"><Trash2 /></Button>
-            </ConfirmDelete>}
-          </div>
-          <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{post.description}</p>
-          {images.length > 0 && <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{images.map((file) => <FilePreview key={file.id} file={file} />)}</div>}
-          {documents.length > 0 && <div className="mt-4 grid gap-2 sm:grid-cols-2">{documents.map((file) => <FilePreview key={file.id} file={file} />)}</div>}
-        </article>;
+        return <PostCard key={post.id} post={post} postFiles={postFiles} isAdmin={isAdmin} onRemove={removePost} />;
       })}</div>}
   </AppShell>;
 }
