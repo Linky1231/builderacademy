@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, FileText, Image as ImageIcon, LoaderCircle, MessagesSquare, Plus, Trash2, Upload, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Download, FileText, Image as ImageIcon, LoaderCircle, MessagesSquare, Plus, Search, Trash2, Upload, X } from "lucide-react";
 import { useEffect, useState, type FormEvent } from "react";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDelete } from "@/components/confirm-delete";
@@ -42,6 +42,29 @@ function FilePreview({ file }: { file: PostFile }) {
   </Button>;
 }
 
+function PostCard({ post, postFiles, isAdmin, onRemove }: { post: Post; postFiles: PostFile[]; isAdmin: boolean; onRemove: (post: Post) => void }) {
+  const [expanded, setExpanded] = useState(false);
+  const images = postFiles.filter((file) => file.mime_type.startsWith("image/"));
+  const documents = postFiles.filter((file) => !file.mime_type.startsWith("image/"));
+  const isLong = post.description.length > 280;
+  const preview = !expanded && isLong ? post.description.slice(0, 280) + "…" : post.description;
+  return <article id={post.id} className="motion-surface scroll-mt-24 rounded-xl border border-border bg-card/85 p-5">
+    <div className="flex items-start justify-between gap-4">
+      <div className="min-w-0">
+        <h2 className="truncate text-xl font-extrabold text-card-foreground">{post.title}</h2>
+        <p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(new Date(post.created_at))}</p>
+      </div>
+      {isAdmin && <ConfirmDelete title="Eliminar publicación" description={`Se eliminará “${post.title}” y todo su material.`} onConfirm={() => onRemove(post)}>
+        <Button size="icon" variant="ghost" aria-label="Eliminar publicación"><Trash2 /></Button>
+      </ConfirmDelete>}
+    </div>
+    <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{preview}</p>
+    {isLong && <Button variant="link" className="mt-1 h-auto p-0 text-accent" onClick={() => setExpanded((v) => !v)}>{expanded ? <><ChevronUp className="h-4 w-4" /> Ver menos</> : <><ChevronDown className="h-4 w-4" /> Ver más</>}</Button>}
+    {images.length > 0 && <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{images.map((file) => <FilePreview key={file.id} file={file} />)}</div>}
+    {documents.length > 0 && <div className="mt-4 grid gap-2 sm:grid-cols-2">{documents.map((file) => <FilePreview key={file.id} file={file} />)}</div>}
+  </article>;
+}
+
 function Forum() {
   const { user, isAdmin } = Route.useRouteContext();
   const cachedForum = readCache<{ posts: Post[]; files: PostFile[] }>("forum");
@@ -54,6 +77,7 @@ function Forum() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [uploads, setUploads] = useState<File[]>([]);
+  const [query, setQuery] = useState("");
 
   async function load() {
     const [postResult, fileResult] = await Promise.all([
@@ -108,15 +132,24 @@ function Forum() {
     await load();
   }
 
+  const filteredPosts = query.trim()
+    ? posts.filter((post) => `${post.title} ${post.description}`.toLowerCase().includes(query.trim().toLowerCase()))
+    : posts;
+
   return <AppShell isAdmin={isAdmin}>
     <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
-      <div>
+      <div className="min-w-0">
         <span className="flex items-center gap-2 text-xs font-bold text-accent"><MessagesSquare className="h-4 w-4" /> FORO</span>
         <h1 className="mt-2 text-3xl font-extrabold text-card-foreground sm:text-4xl">Publicaciones y material</h1>
         <p className="mt-2 text-muted-foreground">Consulta anuncios, imágenes y documentos de la academia. Puedes mencionarlos en cualquier sala escribiendo @.</p>
       </div>
       {isAdmin && <Button onClick={() => setOpen((value) => !value)}>{open ? <X /> : <Plus />}{open ? "Cancelar" : "Nueva publicación"}</Button>}
     </header>
+
+    <div className="relative mb-6">
+      <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+      <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar publicaciones del foro…" className="pl-9" aria-label="Buscar publicaciones" />
+    </div>
 
     {notice && <div className="motion-notice mb-6 flex items-center justify-between rounded-xl border border-border bg-secondary/40 px-4 py-3 text-sm"><span>{notice}</span><Button size="icon-sm" variant="ghost" onClick={() => setNotice("")} aria-label="Cerrar aviso"><X /></Button></div>}
 
@@ -133,25 +166,10 @@ function Forum() {
     </form>}
 
     {loading ? <div className="motion-loading grid min-h-60 place-items-center text-sm text-muted-foreground"><span className="flex items-center gap-2"><LoaderCircle className="animate-spin" />Cargando el foro…</span></div>
-      : posts.length === 0 ? <div className="motion-surface rounded-xl border border-dashed border-border py-16 text-center text-muted-foreground">Todavía no hay publicaciones en el foro.</div>
-      : <div className="motion-stagger space-y-5">{posts.map((post) => {
+      : filteredPosts.length === 0 ? <div className="motion-surface rounded-xl border border-dashed border-border py-16 text-center text-muted-foreground">{posts.length === 0 ? "Todavía no hay publicaciones en el foro." : "Sin resultados para tu búsqueda."}</div>
+      : <div className="motion-stagger space-y-5">{filteredPosts.map((post) => {
         const postFiles = files.filter((file) => file.post_id === post.id);
-        const images = postFiles.filter((file) => file.mime_type.startsWith("image/"));
-        const documents = postFiles.filter((file) => !file.mime_type.startsWith("image/"));
-        return <article key={post.id} id={post.id} className="scroll-mt-24 rounded-xl border border-border bg-card/85 p-5">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0">
-              <h2 className="text-xl font-extrabold text-card-foreground">{post.title}</h2>
-              <p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }).format(new Date(post.created_at))}</p>
-            </div>
-            {isAdmin && <ConfirmDelete title="Eliminar publicación" description={`Se eliminará “${post.title}” y todo su material.`} onConfirm={() => removePost(post)}>
-              <Button size="icon" variant="ghost" aria-label="Eliminar publicación"><Trash2 /></Button>
-            </ConfirmDelete>}
-          </div>
-          <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-muted-foreground">{post.description}</p>
-          {images.length > 0 && <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{images.map((file) => <FilePreview key={file.id} file={file} />)}</div>}
-          {documents.length > 0 && <div className="mt-4 grid gap-2 sm:grid-cols-2">{documents.map((file) => <FilePreview key={file.id} file={file} />)}</div>}
-        </article>;
+        return <PostCard key={post.id} post={post} postFiles={postFiles} isAdmin={isAdmin} onRemove={removePost} />;
       })}</div>}
   </AppShell>;
 }
