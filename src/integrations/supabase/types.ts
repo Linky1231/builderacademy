@@ -335,7 +335,6 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_restricted: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "student"
