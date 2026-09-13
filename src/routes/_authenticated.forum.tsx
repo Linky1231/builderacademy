@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { readCache, writeCache } from "@/lib/data-cache";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Post = Tables<"forum_posts">;
@@ -43,9 +44,10 @@ function FilePreview({ file }: { file: PostFile }) {
 
 function Forum() {
   const { user, isAdmin } = Route.useRouteContext();
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [files, setFiles] = useState<PostFile[]>([]);
-  const [loading, setLoading] = useState(true);
+  const cachedForum = readCache<{ posts: Post[]; files: PostFile[] }>("forum");
+  const [posts, setPosts] = useState<Post[]>(cachedForum?.posts ?? []);
+  const [files, setFiles] = useState<PostFile[]>(cachedForum?.files ?? []);
+  const [loading, setLoading] = useState(!cachedForum);
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [open, setOpen] = useState(false);
@@ -60,6 +62,7 @@ function Forum() {
     ]);
     setPosts(postResult.data ?? []);
     setFiles(fileResult.data ?? []);
+    writeCache("forum", { posts: postResult.data ?? [], files: fileResult.data ?? [] });
     setLoading(false);
   }
 
