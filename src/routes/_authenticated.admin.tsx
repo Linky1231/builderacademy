@@ -275,7 +275,7 @@ function Admin() {
               <Textarea value={sanctionReason} onChange={(e) => setSanctionReason(e.target.value)} maxLength={300} placeholder="Ej.: Lenguaje ofensivo en la sala en vivo." className="mt-2 min-h-20 bg-background/50"/>
             </label>
             <label className="mt-4 block text-sm font-semibold">Vence el (opcional)
-              <Input type="datetime-local" value={sanctionExpires} onChange={(e) => setSanctionExpires(e.target.value)} className="mt-2 bg-background/50"/>
+              <Input type="datetime-local" value={sanctionExpires} onChange={(e) => setSanctionExpires(e.target.value)} className="mt-2 h-11 min-w-0 max-w-full bg-background/50"/>
             </label>
             <Button variant="secondary" disabled={busy} className="mt-4 w-full" onClick={createSanction}><Gavel/>Aplicar sanción</Button>
           </div>
