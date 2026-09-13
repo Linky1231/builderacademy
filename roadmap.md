@@ -12,3 +12,4 @@
 - [x] Evitar que los botones superiores cambien de posición al navegar.
 
 - [x] Añadir el apartado Reto en administración y publicarlo en el chat al iniciar o reanudar la sesión.
+- [x] Añadir Trust Points con historial de cambios y gestión de sanciones y baneos.
