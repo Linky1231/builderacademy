@@ -7,5 +7,5 @@
 - [x] Completar almacenamiento, permisos y limpieza de archivos.
 - [ ] Validar flujos de administrador, estudiante, móvil y escritorio.
 
-- [ ] Corregir definitivamente la eliminación de publicaciones y mensajes, con persistencia, carga y errores.
-- [ ] Modernizar la interfaz completa con navegación activa y microinteracciones ligeras.
+- [x] Corregir definitivamente la eliminación de publicaciones y mensajes, con persistencia, carga y errores.
+- [x] Modernizar la interfaz completa con navegación activa y microinteracciones ligeras.
