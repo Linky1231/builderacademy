@@ -85,8 +85,9 @@ function Admin() {
   }
 
   async function removeClass(item: AcademyClass) {
-    const result = await supabase.from("classes").delete().eq("id", item.id);
-    if (result.error) { setNotice(result.error.message); return; }
+    const result = await supabase.from("classes").delete().eq("id", item.id).select("id").maybeSingle();
+    if (result.error) throw new Error(`No se pudo eliminar la clase: ${result.error.message}`);
+    if (!result.data) throw new Error("La clase no se eliminó. Comprueba tus permisos e inténtalo de nuevo.");
     setClasses((current) => current.filter((entry) => entry.id !== item.id));
     setResources((current) => current.filter((entry) => entry.class_id !== item.id));
     setNotice("Clase y sala eliminadas."); if (editing === item.id) { setEditing(null); setForm(empty); } await load();
@@ -110,8 +111,9 @@ function Admin() {
   }
 
   async function removeResource(resource: Resource) {
-    const result = await supabase.from("class_resources").delete().eq("id", resource.id);
-    if (result.error) { setNotice(result.error.message); return; }
+    const result = await supabase.from("class_resources").delete().eq("id", resource.id).select("id").maybeSingle();
+    if (result.error) throw new Error(`No se pudo eliminar el recurso: ${result.error.message}`);
+    if (!result.data) throw new Error("El recurso no se eliminó. Comprueba tus permisos e inténtalo de nuevo.");
     setResources((current) => current.filter((entry) => entry.id !== resource.id));
     setNotice("Recurso eliminado."); await load();
   }

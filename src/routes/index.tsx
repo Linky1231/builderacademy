@@ -48,7 +48,7 @@ function Home() {
   }
 
   return <main className="relative grid min-h-screen place-items-center overflow-hidden px-5 py-10">
-      <section className="academy-panel relative w-full max-w-md rounded-[24px] border border-border bg-card/95 p-6 sm:p-8">
+      <section className="academy-panel relative w-full max-w-md rounded-xl border border-border bg-card/95 p-6 sm:p-8">
         <Brand className="mb-8 justify-center" />
         <div className="mb-7 text-center"><h2 className="text-2xl font-extrabold text-card-foreground">{mode === "login" ? "Continúa creando" : "Empieza tu camino"}</h2><p className="text-sm text-muted-foreground">Tu próxima gran idea comienza aquí.</p></div>
         <Button onClick={google} disabled={busy} variant="outline" className="h-12 w-full border-primary text-accent hover:bg-secondary hover:text-card-foreground"><span className="text-lg font-bold">G</span> Continuar con Google</Button>
