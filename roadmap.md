@@ -16,3 +16,4 @@
 - [x] Aplicar un sistema global de animaciones fluidas y accesibles a toda la interfaz.
 - [x] Mostrar Trust Points e historial personal de cambios en la edición del perfil.
 - [x] Corregir identidad de mensajes, chat móvil, fecha administrativa, regreso desde Perfil y logo estático en acceso.
+- [x] Agrupar identidad y contenido en el chat, acelerar la navegación y mostrar completas las imágenes del foro.
