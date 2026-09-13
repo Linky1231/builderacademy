@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { BookOpen, CalendarClock, ExternalLink, FileText, GraduationCap, MessageCircle, Pencil, Plus, Radio, Save, Search, Shield, Target, Trash2, Upload, Users, X } from "lucide-react";
+import { BookOpen, CalendarClock, ExternalLink, FileText, Gavel, GraduationCap, History, MessageCircle, Minus, Pencil, Plus, Radio, Save, Search, Shield, Star, Target, Trash2, Upload, Users, X } from "lucide-react";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDelete } from "@/components/confirm-delete";
@@ -13,6 +13,20 @@ import { formatClassDate, statusCopy, type AcademyClass, type Profile } from "@/
 
 type Resource = Tables<"class_resources">;
 type StatusFilter = "all" | AcademyClass["status"];
+type TrustEvent = Tables<"trust_events">;
+type Sanction = Tables<"user_sanctions">;
+
+const sanctionCopy: Record<Sanction["type"], string> = { warning: "Advertencia", suspension: "Suspensión", ban: "Baneo" };
+
+function trustTone(points: number) {
+  if (points >= 100) return "text-emerald-400";
+  if (points >= 50) return "text-amber-400";
+  return "text-destructive";
+}
+
+function formatMoment(value: string) {
+  return new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }).format(new Date(value));
+}
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({ meta: [
