@@ -54,19 +54,77 @@ function Admin() {
   const [resourceTitle, setResourceTitle] = useState("");
   const [resourceFile, setResourceFile] = useState<File | null>(null);
   const [challenges, setChallenges] = useState<Record<string, string>>({});
+  const [trustEvents, setTrustEvents] = useState<TrustEvent[]>([]);
+  const [sanctions, setSanctions] = useState<Sanction[]>([]);
+  const [trustUser, setTrustUser] = useState("");
+  const [trustAmount, setTrustAmount] = useState(10);
+  const [trustReason, setTrustReason] = useState("");
+  const [sanctionType, setSanctionType] = useState<Sanction["type"]>("warning");
+  const [sanctionReason, setSanctionReason] = useState("");
+  const [sanctionExpires, setSanctionExpires] = useState("");
 
   async function load() {
     if (!isAdmin) { void navigate({ to: "/dashboard" }); return; }
-    const [classResult, profileResult, resourceResult] = await Promise.all([
+    const [classResult, profileResult, resourceResult, trustResult, sanctionResult] = await Promise.all([
       supabase.from("classes").select("*").order("created_at", { ascending: false }),
       supabase.from("profiles").select("*").order("created_at", { ascending: false }),
       supabase.from("class_resources").select("*").order("created_at", { ascending: false }),
+      supabase.from("trust_events").select("*").order("created_at", { ascending: false }).limit(100),
+      supabase.from("user_sanctions").select("*").order("created_at", { ascending: false }),
     ]);
     setClasses(classResult.data ?? []);
     setChallenges(Object.fromEntries((classResult.data ?? []).map((entry) => [entry.id, entry.challenge ?? ""])));
     setStudents(profileResult.data ?? []);
     setResources(resourceResult.data ?? []);
+    setTrustEvents(trustResult.data ?? []);
+    setSanctions(sanctionResult.data ?? []);
+    setTrustUser((current) => current || profileResult.data?.[0]?.id || "");
     setResourceClass((current) => current || classResult.data?.[0]?.id || "");
+  }
+
+  async function adjustTrust(direction: 1 | -1) {
+    const target = students.find((entry) => entry.id === trustUser);
+    const amount = Math.abs(Math.round(trustAmount));
+    if (!target || !amount) { setNotice("Elige un usuario y una cantidad de puntos."); return; }
+    if (!trustReason.trim()) { setNotice("Escribe el motivo del ajuste de Trust Points."); return; }
+    setBusy(true); setNotice("");
+    const delta = direction * amount;
+    const balance = Math.max(0, (target.trust_points ?? 0) + delta);
+    const updated = await supabase.from("profiles").update({ trust_points: balance }).eq("id", target.id).select("id").maybeSingle();
+    if (updated.error || !updated.data) { setBusy(false); setNotice(updated.error?.message ?? "No se pudieron actualizar los Trust Points."); return; }
+    const logged = await supabase.from("trust_events").insert({ user_id: target.id, delta, balance_after: balance, reason: trustReason.trim(), created_by: user.id });
+    setBusy(false); setTrustReason("");
+    setNotice(logged.error ? "Puntos actualizados, pero el historial no se guardó." : `${delta > 0 ? "+" : ""}${delta} Trust Points para ${target.username}.`);
+    await load();
+  }
+
+  async function createSanction() {
+    const target = students.find((entry) => entry.id === trustUser);
+    if (!target) { setNotice("Elige un usuario para sancionar."); return; }
+    if (!sanctionReason.trim()) { setNotice("Escribe el motivo de la sanción."); return; }
+    setBusy(true); setNotice("");
+    const result = await supabase.from("user_sanctions").insert({
+      user_id: target.id, type: sanctionType, reason: sanctionReason.trim(),
+      expires_at: sanctionExpires ? new Date(sanctionExpires).toISOString() : null, created_by: user.id,
+    });
+    setBusy(false);
+    if (result.error) { setNotice(result.error.message); return; }
+    setSanctionReason(""); setSanctionExpires("");
+    setNotice(`${sanctionCopy[sanctionType]} aplicada a ${target.username}.`); await load();
+  }
+
+  async function toggleSanction(item: Sanction) {
+    const result = await supabase.from("user_sanctions").update({ active: !item.active }).eq("id", item.id).select("id").maybeSingle();
+    if (result.error || !result.data) { setNotice(result.error?.message ?? "No se pudo actualizar la sanción."); return; }
+    setNotice(item.active ? "Sanción levantada." : "Sanción reactivada."); await load();
+  }
+
+  async function removeSanction(item: Sanction) {
+    const result = await supabase.from("user_sanctions").delete().eq("id", item.id).select("id").maybeSingle();
+    if (result.error) throw new Error(`No se pudo eliminar la sanción: ${result.error.message}`);
+    if (!result.data) throw new Error("La sanción no se eliminó. Comprueba tus permisos.");
+    setSanctions((current) => current.filter((entry) => entry.id !== item.id));
+    setNotice("Sanción eliminada del historial."); await load();
   }
 
   useEffect(() => { void load(); }, [isAdmin]);
