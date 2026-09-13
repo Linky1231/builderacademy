@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { BookOpen, CalendarClock, ExternalLink, FileText, GraduationCap, MessageCircle, Pencil, Plus, Radio, Save, Search, Shield, Trash2, Upload, Users, X } from "lucide-react";
+import { BookOpen, CalendarClock, ExternalLink, FileText, GraduationCap, MessageCircle, Pencil, Plus, Radio, Save, Search, Shield, Target, Trash2, Upload, Users, X } from "lucide-react";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { AppShell } from "@/components/app-shell";
 import { ConfirmDelete } from "@/components/confirm-delete";
@@ -39,6 +39,7 @@ function Admin() {
   const [resourceClass, setResourceClass] = useState("");
   const [resourceTitle, setResourceTitle] = useState("");
   const [resourceFile, setResourceFile] = useState<File | null>(null);
+  const [challenges, setChallenges] = useState<Record<string, string>>({});
 
   async function load() {
     if (!isAdmin) { void navigate({ to: "/dashboard" }); return; }
