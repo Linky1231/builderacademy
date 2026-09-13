@@ -171,6 +171,14 @@
   input:focus, textarea:focus, select:focus { transform: translateY(-1px); }
   a:active, button:active { transition-duration: var(--motion-fast); }
 
+  main article { animation: motion-rise 480ms var(--motion-ease-out) both; }
+  main [role="status"], main [role="alert"] { animation: motion-pop 320ms var(--motion-ease-out) both; }
+  main label:has(input[type="file"]) {
+    transition: transform var(--motion-base) var(--motion-ease), border-color var(--motion-base) ease, background-color var(--motion-base) ease;
+  }
+  main label:has(input[type="file"]):hover { transform: translateY(-2px); border-color: var(--ring); }
+  [data-state] { transition-timing-function: var(--motion-ease); }
+
   ::selection { background: color-mix(in oklab, var(--accent) 35%, transparent); }
 }
 
