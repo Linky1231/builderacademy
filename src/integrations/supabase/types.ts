@@ -55,6 +55,7 @@ export type Database = {
       classes: {
         Row: {
           category: string
+          challenge: string
           cover_key: string
           created_at: string
           created_by: string
@@ -68,6 +69,7 @@ export type Database = {
         }
         Insert: {
           category?: string
+          challenge?: string
           cover_key?: string
           created_at?: string
           created_by: string
@@ -81,6 +83,7 @@ export type Database = {
         }
         Update: {
           category?: string
+          challenge?: string
           cover_key?: string
           created_at?: string
           created_by?: string
@@ -169,6 +172,7 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          is_challenge: boolean
         }
         Insert: {
           attachment_mime_type?: string | null
@@ -179,6 +183,7 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          is_challenge?: boolean
         }
         Update: {
           attachment_mime_type?: string | null
@@ -189,6 +194,7 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          is_challenge?: boolean
         }
         Relationships: [
           {

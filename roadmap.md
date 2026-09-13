@@ -10,3 +10,5 @@
 - [x] Corregir definitivamente la eliminación de publicaciones y mensajes, con persistencia, carga y errores.
 - [x] Modernizar la interfaz completa con navegación activa y microinteracciones ligeras.
 - [x] Evitar que los botones superiores cambien de posición al navegar.
+
+- [x] Añadir el apartado Reto en administración y publicarlo en el chat al iniciar o reanudar la sesión.
