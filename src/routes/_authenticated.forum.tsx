@@ -115,9 +115,9 @@ function Forum() {
       {isAdmin && <Button onClick={() => setOpen((value) => !value)}>{open ? <X /> : <Plus />}{open ? "Cancelar" : "Nueva publicación"}</Button>}
     </header>
 
-    {notice && <div className="mb-6 flex items-center justify-between rounded-xl border border-border bg-secondary/40 px-4 py-3 text-sm"><span>{notice}</span><Button size="icon-sm" variant="ghost" onClick={() => setNotice("")} aria-label="Cerrar aviso"><X /></Button></div>}
+    {notice && <div className="motion-notice mb-6 flex items-center justify-between rounded-xl border border-border bg-secondary/40 px-4 py-3 text-sm"><span>{notice}</span><Button size="icon-sm" variant="ghost" onClick={() => setNotice("")} aria-label="Cerrar aviso"><X /></Button></div>}
 
-    {isAdmin && open && <form onSubmit={create} className="mb-8 space-y-4 rounded-xl border border-border bg-card/90 p-5">
+    {isAdmin && open && <form onSubmit={create} className="motion-surface mb-8 space-y-4 rounded-xl border border-border bg-card/90 p-5">
       <label className="block text-sm font-semibold">Título<Input required minLength={3} maxLength={140} value={title} onChange={(event) => setTitle(event.target.value)} className="mt-2 bg-background/50" /></label>
       <label className="block text-sm font-semibold">Descripción<Textarea required minLength={5} value={description} onChange={(event) => setDescription(event.target.value)} className="mt-2 min-h-32 bg-background/50" /></label>
       <label className="block rounded-xl border border-dashed border-primary p-5 text-center text-sm text-muted-foreground">
@@ -129,9 +129,9 @@ function Forum() {
       <Button disabled={busy} className="w-full">{busy ? "Publicando…" : "Publicar en el foro"}</Button>
     </form>}
 
-    {loading ? <div className="grid min-h-60 place-items-center text-sm text-muted-foreground"><span className="flex items-center gap-2"><LoaderCircle className="animate-spin" />Cargando el foro…</span></div>
-      : posts.length === 0 ? <div className="rounded-xl border border-dashed border-border py-16 text-center text-muted-foreground">Todavía no hay publicaciones en el foro.</div>
-      : <div className="space-y-5">{posts.map((post) => {
+    {loading ? <div className="motion-loading grid min-h-60 place-items-center text-sm text-muted-foreground"><span className="flex items-center gap-2"><LoaderCircle className="animate-spin" />Cargando el foro…</span></div>
+      : posts.length === 0 ? <div className="motion-surface rounded-xl border border-dashed border-border py-16 text-center text-muted-foreground">Todavía no hay publicaciones en el foro.</div>
+      : <div className="motion-stagger space-y-5">{posts.map((post) => {
         const postFiles = files.filter((file) => file.post_id === post.id);
         const images = postFiles.filter((file) => file.mime_type.startsWith("image/"));
         const documents = postFiles.filter((file) => !file.mime_type.startsWith("image/"));

@@ -65,6 +65,11 @@
 
 :root {
   --radius: 1.25rem;
+  --motion-fast: 160ms;
+  --motion-base: 260ms;
+  --motion-slow: 520ms;
+  --motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --background: oklch(0 0 0);
   --foreground: oklch(0.87 0.025 250);
   --card: oklch(0.205 0.035 255);
@@ -152,13 +157,76 @@
     background-size: auto, 44px 44px, 44px 44px;
   }
 
-  button, a, input, textarea, select { letter-spacing: 0; }
+  html { scroll-behavior: smooth; }
+
+  button, a, input, textarea, select {
+    letter-spacing: 0;
+    transition-property: color, background-color, border-color, opacity, box-shadow, transform, filter;
+    transition-duration: var(--motion-base);
+    transition-timing-function: var(--motion-ease);
+  }
+
+  input, textarea, select { transform: translateZ(0); }
+  input:hover, textarea:hover, select:hover { border-color: color-mix(in oklab, var(--ring) 55%, transparent); }
+  input:focus, textarea:focus, select:focus { transform: translateY(-1px); }
+  a:active, button:active { transition-duration: var(--motion-fast); }
+
+  main article { animation: motion-rise 480ms var(--motion-ease-out) both; }
+  main [role="status"], main [role="alert"] { animation: motion-pop 320ms var(--motion-ease-out) both; }
+  main label:has(input[type="file"]) {
+    transition: transform var(--motion-base) var(--motion-ease), border-color var(--motion-base) ease, background-color var(--motion-base) ease;
+  }
+  main label:has(input[type="file"]):hover { transform: translateY(-2px); border-color: var(--ring); }
+  [data-state] { transition-timing-function: var(--motion-ease); }
+
+  ::selection { background: color-mix(in oklab, var(--accent) 35%, transparent); }
 }
 
 @layer utilities {
+  @keyframes motion-rise {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes motion-pop {
+    from { opacity: 0; transform: translateY(8px) scale(0.975); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes motion-message-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.985); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes motion-logo-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  @keyframes motion-pulse-soft {
+    0%, 100% { opacity: 0.55; transform: scale(0.96); }
+    50% { opacity: 1; transform: scale(1); }
+  }
+
+  .motion-page { animation: motion-rise var(--motion-slow) var(--motion-ease-out) both; }
+  .motion-surface { animation: motion-pop 420ms var(--motion-ease-out) both; }
+  .motion-notice { animation: motion-pop 320ms var(--motion-ease-out) both; }
+  .motion-message { animation: motion-message-in 360ms var(--motion-ease-out) both; }
+  .motion-logo { animation: motion-logo-float 4s ease-in-out infinite; }
+  .motion-loading { animation: motion-pulse-soft 1.5s ease-in-out infinite; }
+
+  .motion-stagger > * { animation: motion-rise 480ms var(--motion-ease-out) both; }
+  .motion-stagger > :nth-child(2) { animation-delay: 55ms; }
+  .motion-stagger > :nth-child(3) { animation-delay: 110ms; }
+  .motion-stagger > :nth-child(4) { animation-delay: 165ms; }
+  .motion-stagger > :nth-child(5) { animation-delay: 220ms; }
+  .motion-stagger > :nth-child(n+6) { animation-delay: 275ms; }
+
+  .motion-interactive {
+    transition: transform var(--motion-base) var(--motion-ease), border-color var(--motion-base) ease, background-color var(--motion-base) ease, box-shadow var(--motion-base) ease;
+  }
+  .motion-interactive:hover { transform: translateY(-2px); }
+  .motion-interactive:active { transform: translateY(0) scale(0.985); }
+
   .academy-panel {
     box-shadow: 0 14px 42px -18px oklch(0.54 0.14 255 / 0.28);
-    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
+    transition: transform var(--motion-base) var(--motion-ease), box-shadow var(--motion-base) ease, border-color var(--motion-base) ease;
   }
   .academy-panel:hover {
     transform: translateY(-3px);
@@ -176,4 +244,6 @@
     transition-duration: 0.01ms !important;
   }
   .academy-panel:hover { transform: none; }
+  .motion-page, .motion-surface, .motion-notice, .motion-message, .motion-logo, .motion-loading, .motion-stagger > * { animation: none !important; }
+  .motion-interactive:hover, .motion-interactive:active, input:focus, textarea:focus, select:focus { transform: none; }
 }
